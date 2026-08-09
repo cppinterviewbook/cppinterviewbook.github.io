@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The C++ Interview Book — 173 questions from auto to C++26</title>
+  <meta name="description" content="173 C++ interview questions with detailed answers. Covers C++23, C++26, and modern best practices. Updated for how interviews actually work in 2026.">
+  <meta property="og:title" content="The C++ Interview Book">
+  <meta property="og:description" content="173 questions from auto to C++26. Updated for how interviews actually work in 2026.">
+  <meta property="og:image" content="cover.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141417;
+      --bg-raised: #1c1c21;
+      --bg-code: #111114;
+      --text: #d4d4d8;
+      --text-dim: #8b8b95;
+      --text-bright: #f0f0f3;
+      --accent: #e8723a;
+      --accent-hover: #f2884f;
+      --accent-dim: rgba(232, 114, 58, 0.12);
+      --border: #2a2a30;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Source Sans 3', sans-serif;
+      --col-max: 720px;
+      --gutter: clamp(1.25rem, 5vw, 2.5rem);
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: var(--sans);
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
+    a:hover { color: var(--accent-hover); }
+
+    /* --- Layout --- */
+    .col {
+      max-width: var(--col-max);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    section {
+      padding: 4.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* --- Typography --- */
+    h1, h2, h3 {
+      font-family: var(--mono);
+      color: var(--text-bright);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); line-height: 1.2; }
+    h2 { font-size: 1.25rem; line-height: 1.35; margin-bottom: 1.5rem; }
+    h3 { font-size: 1rem; line-height: 1.4; margin-bottom: 0.75rem; color: var(--accent); }
+
+    p + p { margin-top: 1rem; }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* --- Buttons --- */
+    .btn {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 0.875rem 2rem;
+      border-radius: 4px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .btn-primary:hover { background: var(--accent-hover); color: var(--bg); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--text-dim); color: var(--text-bright); }
+
+    /* --- Hero --- */
+    .hero {
+      padding: 6rem 0 4.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      text-align: center;
+    }
+
+    .hero-cover {
+      width: 220px;
+      height: auto;
+      border-radius: 4px;
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.4),
+        0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .hero-text { max-width: 560px; }
+
+    .hero h1 { margin-bottom: 1rem; }
+
+    .hero .subtitle {
+      font-size: 1.125rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (min-width: 640px) {
+      .hero-inner {
+        flex-direction: row;
+        text-align: left;
+        gap: 3.5rem;
+      }
+      .hero-cover { width: 280px; flex-shrink: 0; }
+      .hero-ctas { justify-content: flex-start; }
+    }
+
+    /* --- Inside --- */
+    .parts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .part-item {
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      padding: 0.625rem 0.875rem;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .part-item .part-name { color: var(--text); }
+    .part-item .part-count { color: var(--text-dim); white-space: nowrap; }
+
+    @media (min-width: 480px) {
+      .parts-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-number {
+      font-family: var(--mono);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* --- Why --- */
+    .reasons {
+      display: grid;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .reason {
+      padding: 1.5rem;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .reason p {
+      font-size: 0.9375rem;
+      color: var(--text-dim);
+      margin-top: 0.5rem;
+    }
+
+    /* --- Sample --- */
+    .sample-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+
+    .sample-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sample-qnum {
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .sample-title {
+      font-family: var(--mono);
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-mid {
+      background: rgba(59, 130, 246, 0.15);
+      color: #6b9df7;
+    }
+
+    .sample-body {
+      padding: 1.5rem;
+    }
+
+    .sample-body p {
+      font-size: 0.9375rem;
+    }
+
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1.25rem 1.5rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+
+    .kw { color: #c678dd; }
+    .type { color: #e5c07b; }
+    .fn { color: #61afef; }
+    .cm { color: #5c6370; font-style: italic; }
+    .str { color: #98c379; }
+    .op { color: #56b6c2; }
+
+    .sample-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    /* --- About --- */
+    .about-text {
+      max-width: 600px;
+    }
+
+    /* --- Footer --- */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links a { color: var(--text-dim); }
+    .footer-links a:hover { color: var(--text-bright); }
+
+    footer .btn { margin-bottom: 1.5rem; }
+
+    .copyright {
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+    }
+
+    /* --- Decorative line --- */
+    .hero::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+      margin: 0 auto 3rem;
+    }
+
+    @media (min-width: 640px) {
+      .hero::before {
+        margin: 0 0 3rem var(--gutter);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="col">
+      <div class="hero-inner">
+        <img src="cover.png" alt="The C++ Interview Book cover" class="hero-cover" width="280" height="400">
+        <div class="hero-text">
+          <p class="label">By Sandor Dargo</p>
+          <h1>The C++ Interview Book</h1>
+          <p class="subtitle">173 questions from <code>auto</code> to C++26. Updated for how interviews actually work in 2026.</p>
+          <div class="hero-ctas">
+            <a href="https://leanpub.com/the-cpp-interview-book" class="btn btn-primary">Buy on Leanpub</a>
+            <a href="#sample" class="btn btn-secondary">Read a free sample</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="inside">
+    <div class="col">
+      <p class="label">What's inside</p>
+      <h2>13 parts. 173 questions. One book.</h2>
+      <p>Every question is tagged by difficulty (Junior, Mid, or Senior), cross-referenced to related questions, and followed by the follow-ups an interviewer would actually ask.</p>
+
+      <div class="parts-grid">
+        <div class="part-item"><span class="part-name">Types, deduction, type system</span><span class="part-count">11 Qs</span></div>
+        <div class="part-item"><span class="part-name">const, references, parameters</span><span class="part-count">13 Qs</span></div>
+        <div class="part-item"><span class="part-name">Classes and special functions</span><span class="part-count">19 Qs</span></div>
+        <div class="part-item"><span class="part-name">Static, friends, class features</span><span class="part-count">9 Qs</span></div>
+        <div class="part-item"><span class="part-name">Move semantics</span><span class="part-count">7 Qs</span></div>
+        <div class="part-item"><span class="part-name">Polymorphism and inheritance</span><span class="part-count">17 Qs</span></div>
+        <div class="part-item"><span class="part-name">Modern idioms and best practices</span><span class="part-count">21 Qs</span></div>
+        <div class="part-item"><span class="part-name">Templates and compile-time</span><span class="part-count">8 Qs</span></div>
+        <div class="part-item"><span class="part-name">Smart pointers</span><span class="part-count">10 Qs</span></div>
+        <div class="part-item"><span class="part-name">Standard library and algorithms</span><span class="part-count">20 Qs</span></div>
+        <div class="part-item"><span class="part-name">Error handling and UB</span><span class="part-count">18 Qs</span></div>
+        <div class="part-item"><span class="part-name">C++26 and beyond</span><span class="part-count">7 Qs</span></div>
+        <div class="part-item"><span class="part-name">Code-reading capstone</span><span class="part-count">13 Qs</span></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span class="stat-number">100</span><span class="stat-label">day study schedule</span></div>
+        <div class="stat"><span class="stat-number">3</span><span class="stat-label">difficulty levels</span></div>
+        <div class="stat"><span class="stat-number">355</span><span class="stat-label">topic tags indexed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="col">
+      <p class="label">Why this book</p>
+      <h2>Built for how C++ interviews work now</h2>
+
+      <div class="reasons">
+        <div class="reason">
+          <h3>Built for 2026</h3>
+          <p>AI has changed what interviewers test. Rote syntax recall is cheap now. This book focuses on the "why" and "when" &mdash; the understanding that survives follow-up questions and does not depend on having a tool open in another tab.</p>
+        </div>
+        <div class="reason">
+          <h3>No fluff, no duplicates</h3>
+          <p>The 2026 edition cut 19 duplicate questions from the original and added 40+ new ones covering C++23 and C++26. Every question earns its place. Cross-references replace repetition.</p>
+        </div>
+        <div class="reason">
+          <h3>Two modes</h3>
+          <p>Follow the 100-day schedule for structured daily study with spaced repetition. Or jump straight to the topic you need before tomorrow's interview. The book works both ways.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sample">
+    <div class="col">
+      <p class="label">Sample question</p>
+      <h2>See the format before you buy</h2>
+
+      <div class="sample-card">
+        <div class="sample-header">
+          <span class="sample-qnum">Q5.1</span>
+          <span class="sample-title">What does <code>std::move</code> actually do?</span>
+          <span class="badge badge-mid">Mid</span>
+        </div>
+        <div class="sample-body">
+          <p><code>std::move</code> does not move anything. At runtime, it does nothing at all. It does not even generate a single byte of executable code.</p>
+          <p><code>std::move</code> is in fact just a tool to cast whatever its input is to an rvalue reference. That is all it does &mdash; an unconditional cast.</p>
+          <p>Under the hood, <code>std::move</code> is essentially a <code>static_cast</code> to an rvalue reference:</p>
+
+<pre><span class="cm">// Simplified implementation of std::move</span>
+<span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="type">T</span>&gt;
+<span class="kw">constexpr</span> std::<span class="type">remove_reference_t</span>&lt;<span class="type">T</span>&gt;<span class="op">&amp;&amp;</span> <span class="fn">move</span>(<span class="type">T</span><span class="op">&amp;&amp;</span> param) <span class="kw">noexcept</span> {
+  <span class="kw">return</span> <span class="kw">static_cast</span>&lt;std::<span class="type">remove_reference_t</span>&lt;<span class="type">T</span>&gt;<span class="op">&amp;&amp;</span>&gt;(param);
+}</pre>
+
+          <p>Applying <code>std::move</code> to an object tells the compiler that the object is eligible to be moved from. Whether a move actually happens depends on whether the receiving context &mdash; a move constructor, a move assignment operator, or any function overloaded on rvalue references &mdash; exists and is selected by overload resolution.</p>
+        </div>
+        <div class="sample-footer">
+          <span>This is one of 173 questions in The C++ Interview Book.</span>
+          <a href="https://leanpub.com/the-cpp-interview-book" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.8125rem;">Buy on Leanpub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="col">
+      <p class="label">About the author</p>
+      <h2>Sandor Dargo</h2>
+      <div class="about-text">
+        <p>Sandor Dargo is a C++ developer and the author of <a href="https://www.sandordargo.com">sandordargo.com</a>, where he writes about C++, software craftsmanship, and career growth. He published the first edition of this book in 2021 as <em>Daily C++ Interview</em>; this 2026 edition is a complete restructuring with new content covering C++23, C++26, and the realities of interviewing in a world where AI tools are part of everyday development.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="col">
+      <nav class="footer-links">
+        <a href="#">Contents</a>
+        <a href="#sample">Sample</a>
+        <a href="#about">About</a>
+        <a href="#">FAQ</a>
+      </nav>
+      <a href="https://leanpub.com/the-cpp-interview-book" class="btn btn-primary">Buy on Leanpub</a>
+      <p class="copyright">&copy; 2026 Sandor Dargo. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
